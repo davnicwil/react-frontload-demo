@@ -1,53 +1,51 @@
 import React from 'react'
+import { StoreProvider, withStore } from './store'
 
-class BlogPost extends React.Component {
-  state = {}
+const BlogPost = withStore(
+  class extends React.Component {
+    componentDidMount() {
+      fetch(`/api/blogpost/${this.props.id}`)
+        .then((res) => res.json())
+        .then((blogPost) => {
+          this.props.store.set({
+            ...this.props.store.get(),
+            [blogPost.id]: blogPost,
+          })
+        })
+    }
 
-  componentDidMount() {
-    fetch(`/api/blogpost/${this.props.id}`)
-      .then((res) => res.json())
-      .then((blogPost) => {
-        this.setState({ blogPost })
-      })
-  }
+    render() {
+      const blogPost = this.props.store.get()[this.props.id]
 
-  render() {
-    return (
-      <div
-        style={{
-          boxShadow: '0px 2px 4px 0px rgba(0,0,0,0.4)',
-          lineHeight: '1.4',
-          borderRadius: 5,
-          padding: 16,
-          maxWidth: 800,
-          margin: '0 auto 32px',
-          fontFamily: 'Helvetica Neue',
-          background: '#fff',
-        }}
-      >
+      return (
         <div
           style={{
-            fontSize: 24,
-            fontWeight: 600,
-            marginBottom: 32,
+            boxShadow: '0px 2px 4px 0px rgba(0,0,0,0.4)',
+            lineHeight: '1.4',
+            borderRadius: 5,
+            padding: 16,
+            maxWidth: 800,
+            margin: '0 auto 32px',
+            fontFamily: 'Helvetica Neue',
+            background: '#fff',
           }}
         >
-          {this.state.blogPost ? this.state.blogPost.title : 'Loading...'}
-        </div>
-
-        {this.state.blogPost && (
           <div
             style={{
-              fontSize: 20,
+              fontSize: 24,
+              fontWeight: 600,
+              marginBottom: 32,
             }}
           >
-            {this.state.blogPost.text}
+            {blogPost ? blogPost.title : 'Loading...'}
           </div>
-        )}
-      </div>
-    )
-  }
-}
+
+          {blogPost && <div style={{ fontSize: 20 }}>{blogPost.text}</div>}
+        </div>
+      )
+    }
+  },
+)
 
 const Page = () => (
   <div style={{ padding: 16 }}>
@@ -57,6 +55,10 @@ const Page = () => (
   </div>
 )
 
-const App = () => <Page />
+const App = (props) => (
+  <StoreProvider store={props.store}>
+    <Page />
+  </StoreProvider>
+)
 
-export default Page
+export default App

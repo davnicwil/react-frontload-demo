@@ -4,6 +4,8 @@ import React from 'react'
 import { renderToStaticMarkup, renderToString } from 'react-dom/server'
 import App from './App'
 import blogPostService from './blogPostService'
+import { createStore } from './store'
+import serialize from 'serialize-javascript'
 
 const app = express()
 
@@ -12,10 +14,25 @@ console.log(`${__dirname}bundle.js`)
 // serve bundle.js file
 app.use('/bundle.js', express.static(`${__dirname}/bundle.js`))
 
+const loadData = () =>
+  Promise.all([
+    blogPostService.get('001'),
+    blogPostService.get('002'),
+    blogPostService.get('003'),
+  ]).then((results) => ({
+    '001': results[0],
+    '002': results[1],
+    '003': results[2],
+  }))
+
 // render & serve HTML
-app.get('/', (req, res) => {
-  const markup = renderToString(<App />)
-  const html = renderToStaticMarkup(<HtmlTemplate markup={markup} />)
+app.get('/', async (req, res) => {
+  const initialState = await loadData()
+  const store = createStore(initialState)
+  const markup = renderToString(<App store={store} />)
+  const html = renderToStaticMarkup(
+    <HtmlTemplate markup={markup} state={store.get()} />,
+  )
 
   res.send(html)
 })
@@ -24,12 +41,18 @@ const HtmlTemplate = (props) => (
   <html>
     <head>
       <title>My Blog</title>
+
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `window.initialState = ${serialize(props.state)}`,
+        }}
+      />
     </head>
 
     <body
       style={{
         margin: 0,
-        fontFamily: 'Helivetica Neue',
+        fontFamily: 'Helvetica Neue',
         background: '#81D4FA',
       }}
     >
