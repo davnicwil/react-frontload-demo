@@ -3,6 +3,7 @@ import express from 'express'
 import React from 'react'
 import { renderToStaticMarkup, renderToString } from 'react-dom/server'
 import App from './App'
+import blogPostService from './blogPostService'
 
 const app = express()
 
@@ -40,6 +41,17 @@ const HtmlTemplate = (props) => (
     </body>
   </html>
 )
+
+// api endpoint for blog posts
+app.get('/api/blogpost/:id', async (req, res) => {
+  try {
+    const blogPost = await blogPostService.get(req.params.id)
+
+    res.send(blogPost)
+  } catch (err) {
+    res.status(404).send()
+  }
+})
 
 app.listen(3330, () => {
   console.log('\n\nServer started on http://127.0.0.1:3330\n\n')

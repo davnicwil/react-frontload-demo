@@ -4,7 +4,7 @@ module.exports = () => ({
     __dirname: false,
   },
   devtool: 'source-map',
-  entry: ['./src/server.js'],
+  entry: ['regenerator-runtime/runtime', './src/server.js'],
   output: {
     path: `${__dirname}/../build/`,
     filename: 'server.js',

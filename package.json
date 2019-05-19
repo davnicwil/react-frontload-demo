@@ -32,5 +32,8 @@
     "singleQuote": true,
     "trailingComma": "all",
     "arrowParens": "always"
+  },
+  "devDependencies": {
+    "regenerator-runtime": "^0.13.2"
   }
 }

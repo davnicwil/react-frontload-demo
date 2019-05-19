@@ -1,7 +1,7 @@
 module.exports = () => ({
   target: 'web',
   devtool: 'source-map',
-  entry: ['./src/client.js'],
+  entry: ['regenerator-runtime/runtime', './src/client.js'],
   output: {
     path: `${__dirname}/../build/`,
     filename: 'bundle.js',
