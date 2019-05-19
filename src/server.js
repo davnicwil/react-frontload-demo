@@ -1,7 +1,8 @@
 import 'source-map-support/register' // enables node stacktraces with webpack
 import express from 'express'
 import React from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
+import { renderToStaticMarkup, renderToString } from 'react-dom/server'
+import App from './App'
 
 const app = express()
 
@@ -12,12 +13,13 @@ app.use('/bundle.js', express.static(`${__dirname}/bundle.js`))
 
 // render & serve HTML
 app.get('/', (req, res) => {
-  const html = renderToStaticMarkup(<HtmlTemplate />)
+  const markup = renderToString(<App />)
+  const html = renderToStaticMarkup(<HtmlTemplate markup={markup} />)
 
   res.send(html)
 })
 
-const HtmlTemplate = () => (
+const HtmlTemplate = (props) => (
   <html>
     <head>
       <title>My Blog</title>
@@ -31,7 +33,7 @@ const HtmlTemplate = () => (
       }}
     >
       {/* the root element of the react app */}
-      <div id="root" />
+      <div id="root" dangerouslySetInnerHTML={{ __html: props.markup }} />
 
       {/* v=timestamp query string for cache busting of the bundle */}
       <script src={`/bundle.js`} />
