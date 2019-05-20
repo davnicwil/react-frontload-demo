@@ -1,3 +1,4 @@
+import 'isomorphic-fetch'
 import 'source-map-support/register' // enables node stacktraces with webpack
 import express from 'express'
 import React from 'react'
@@ -6,6 +7,7 @@ import App from './App'
 import blogPostService from './blogPostService'
 import { createStore } from './store'
 import serialize from 'serialize-javascript'
+import { frontloadServerRender } from 'react-frontload'
 
 const app = express()
 
@@ -25,9 +27,11 @@ const loadData = () =>
 
 // render & serve HTML
 app.get('/', async (req, res) => {
-  const initialState = await loadData()
+  const initialState = {}
   const store = createStore(initialState)
-  const markup = renderToString(<App store={store} />)
+  const markup = await frontloadServerRender(() =>
+    renderToString(<App store={store} />),
+  )
   const html = renderToStaticMarkup(
     <HtmlTemplate markup={markup} state={store.get()} />,
   )
