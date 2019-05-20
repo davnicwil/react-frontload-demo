@@ -9,8 +9,6 @@ import serialize from 'serialize-javascript'
 
 const app = express()
 
-console.log(`${__dirname}bundle.js`)
-
 // serve bundle.js file
 app.use('/bundle.js', express.static(`${__dirname}/bundle.js`))
 

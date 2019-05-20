@@ -4,7 +4,7 @@ import { StoreProvider, withStore } from './store'
 const BlogPost = withStore(
   class extends React.Component {
     componentDidMount() {
-      fetch(`/api/blogpost/${this.props.id}`)
+      fetch(`http://127.0.0.1:3330/api/blogpost/${this.props.id}`)
         .then((res) => res.json())
         .then((blogPost) => {
           this.props.store.set({
