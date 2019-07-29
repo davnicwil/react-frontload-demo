@@ -14,6 +14,7 @@ const app = express()
 // serve bundle.js file
 app.use('/bundle.js', express.static(`${__dirname}/bundle.js`))
 
+// No longer need this separate server data loading function
 const loadData = () =>
   Promise.all([
     blogPostService.get('001'),

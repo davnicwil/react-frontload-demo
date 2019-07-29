@@ -6,7 +6,7 @@
   "scripts": {
     "build-client": "TARGET=node npx --no-install webpack --config ./webpack/client.config.js --mode development --watch",
     "build-server": "TARGET=node npx --no-install webpack --config ./webpack/server.config.js --mode development --watch",
-    "start": "node ./build/server.js"
+    "start": "npx --no-install nodemon ./build/server.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
     "babel-loader": "8.0.6",
     "express": "4.17.0",
     "isomorphic-fetch": "2.2.1",
+    "nodemon": "1.19.1",
     "prettier": "1.17.1",
     "react": "16.8.6",
     "react-dom": "16.8.6",
